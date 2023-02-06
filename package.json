@@ -1,0 +1,30 @@
+{
+  "name": "chicken_run",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "nodemon src",
+    "start": "node src",
+    "setup": "npm install && node src/setup.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aurerere/CHICKEN_RUN.git"
+  },
+  "author": "aurere",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/aurerere/CHICKEN_RUN/issues"
+  },
+  "homepage": "https://github.com/aurerere/CHICKEN_RUN#readme",
+  "dependencies": {
+    "body-parser": "^1.20.1",
+    "express": "^4.18.2",
+    "sqlite3": "^5.1.4"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  }
+}
