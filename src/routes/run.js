@@ -1,8 +1,9 @@
 import express from "express";
-import bodyParser from "body-parser";
+import runController from "../controllers/runController/index.js";
 
 const chicken = express.Router()
-    .use(bodyParser.json())
+    .post("/:id", runController.stepIncr)
+;
 
 
 export default chicken;

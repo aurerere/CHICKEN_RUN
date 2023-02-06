@@ -5,10 +5,10 @@ import success from "../../responses/success.js";
 export default async function deleteOne(req, res)
 {
     try {
-        const chicken = await dbGet("SELECT * FROM chickens WHERE id = ?", [req.params.id]);
+        const chicken = await dbGet("SELECT id FROM chickens WHERE id = ?", [req.params.id]);
 
         if (chicken.length === 0)
-            return error(res, 404, "Not Found");
+            return error(res, 404, "Chicken Not Found");
 
         await dbRun("DELETE FROM chickens WHERE id = ?", [req.params.id]);
 

@@ -1,40 +1,69 @@
 import error from "../../responses/error.js";
-import {dbRun} from "../../db/index.js";
+import {dbGet, dbRun} from "../../db/index.js";
 import success from "../../responses/success.js";
+import Coop from "../../routes/coop.js";
 
 export default async function patch(req, res)
 {
     try {
+        // toChange is an Object of that will be patched
         const toChange = {};
+        let { name, birthday, weight, coopId } = req.body;
 
-        // Gets the body and prepares it
-        let name = req.body.name ? req.body.name.toString().trim() : undefined;
-        let birthday = req.body["birthday"] && req.body["birthday"].toString().trim() ?
-            new Date(req.body["birthday"]) : null;
-        let weight = req.body.weight ? (req.body.weight.toString().trim() ? Number(req.body.weight) : NaN) : undefined;
+        name = name ? name.toString().trim(): name;
 
-        if (name)
+
+        // if name === undefined, it means that the name is not provided, so it won't be patched
+        if (name !== undefined && name)
             toChange['name'] = name;
+        else if (name !== undefined)
+            return error(res, 400, "Invalid query");
 
-        if (birthday !== null && birthday.toString() !== "Invalid Date") {
+
+        // null in Date() corresponds to the start of the Unix timestamp
+        if (birthday !== null && new Date(birthday).toString() !== "Invalid Date") {
             // Formats the birthday to a SQLite friendly date string
-            birthday = birthday.toISOString().split("T")[0];
+            birthday = new Date(birthday).toISOString().split("T")[0];
             toChange['birthday'] = birthday;
         }
-        else if (birthday !== null)
+        // if birthday === null, it means that the birthday needs to be set to null
+        else if (birthday === null)
+            toChange['birthday'] = null;
+        else if (birthday !== undefined)
             return error(res, 400, "Invalid query");
 
-        if (!isNaN(weight))
+
+        if (weight !== undefined && typeof weight === "number")
             toChange['weight'] = weight;
-        else if (isNaN(weight) && weight !== undefined)
+        else if (weight !== undefined)
             return error(res, 400, "Invalid query");
 
+
+        if (typeof coopId === "number" || coopId === null)
+            toChange['coopId'] = coopId;
+        else if (coopId !== undefined)
+            return error(res, 400, "Invalid query");
+
+
+        // Checks if the coop exists if it is provided
+        if (coopId) {
+            const coop = await dbGet("SELECT * FROM coop WHERE id = ?", [coopId]);
+
+            if (coop.length === 0)
+                return error(res, 404, "Coop Not Found");
+        }
+
+        // If there is nothing to patch, it patches nothing
+        if (Object.keys(toChange).length === 0)
+            return success(res, 200, `Chicken ${req.params.id} patched with success.`);
+
+        // Patches the chicken
         await dbRun(
             `UPDATE chickens SET ${Object.keys(toChange).map(key => `${key} = ?`).join(", ")} WHERE id = ?`,
             [...Object.values(toChange), req.params.id]
         );
 
-        return success(res, 200, `Chicken ${req.params.id} updated with success.`);
+        return success(res, 200, `Chicken ${req.params.id} patched with success.`);
 
     }
     catch (e) {
