@@ -24,6 +24,7 @@ describe("CHICKEN WEB SERVICE", function ()
 
                     res.should.have.status(201);
                     res.body.message.should.be.a('string');
+                    res.body.data.should.have.property('id');
 
                     done();
                 });
@@ -40,6 +41,7 @@ describe("CHICKEN WEB SERVICE", function ()
                 .end(function (err, res) {
                     res.should.have.status(201);
                     res.body.message.should.be.a('string');
+                    res.body.data.should.have.property('id');
 
                     done();
                 });
@@ -96,7 +98,8 @@ describe("CHICKEN WEB SERVICE", function ()
         });
     });
 
-    describe("GET /chicken - Get all chickens", function () {
+    describe("GET /chicken - Get all chickens", function ()
+    {
         it('should return 200 and a list of chickens', function (done) {
             chai.request(BASE_URL)
                 .get('/chicken')
@@ -113,4 +116,70 @@ describe("CHICKEN WEB SERVICE", function ()
                 });
         });
     });
+
+    describe("GET /chicken/:id - Get a chicken by id", function ()
+    {
+        it('should return 200 and a chicken', function (done) {
+            chai.request(BASE_URL)
+                .get('/chicken/1')
+                .end(function (err, res) {
+                    res.should.have.status(200);
+                    res.body.data.should.be.a('object');
+                    res.body.data.should.have.property('id');
+                    res.body.data.should.have.property('name');
+                    res.body.data.should.have.property('birthday');
+                    res.body.data.should.have.property('weight');
+                    res.body.data.should.have.property('isRunning');
+
+                    done();
+                });
+        });
+
+        it('should return 404 and an error message (invalid id)', function (done) {
+            chai.request(BASE_URL)
+                .get('/chicken/0')
+                .end(function (err, res) {
+                    res.should.have.status(404);
+                    res.body.error.should.be.a('string');
+
+                    done();
+                });
+        });
+    });
+
+    describe("DELETE /chicken/:id - Delete a chicken by id", function () {
+        it('should return 202 and a message', function (done) {
+            chai.request(BASE_URL)
+                .post('/chicken')
+                .send({
+                    name: 'test',
+                    birthday: '2020-01-01',
+                    weight: 1
+                })
+                .set('Content-Type', 'application/json')
+                .end(function (err, res) {
+                    chai.request(BASE_URL)
+                        .delete('/chicken/' + res.body.data.id)
+                        .end(function (err, res) {
+                            res.should.have.status(202);
+                            res.body.message.should.be.a('string');
+                            res.body.data.should.have.property('id');
+
+                            done();
+                        });
+                });
+        })
+
+        it('should return 404 and an error message (invalid id)', function (done) {
+            chai.request(BASE_URL)
+                .delete('/chicken/0')
+                .end(function (err, res) {
+                    res.should.have.status(404);
+                    res.body.error.should.be.a('string');
+
+                    done();
+                });
+        });
+    });
+
 });

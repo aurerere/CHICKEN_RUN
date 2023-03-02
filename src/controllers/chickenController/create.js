@@ -23,7 +23,7 @@ export default async function create(req, res)
             [name, birthday, weight]
         );
 
-        return success(res, 201, `Chicken created with id ${insert.lastID}.`);
+        return success(res, 201, `Chicken created with id ${insert.lastID}.`, {id: insert.lastID});
     }
     catch (e) {
         console.log(e);

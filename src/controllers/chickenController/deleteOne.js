@@ -12,7 +12,7 @@ export default async function deleteOne(req, res)
 
         await dbRun("DELETE FROM chickens WHERE id = ?", [req.params.id]);
 
-        return success(res, 202, `Deleted row ${req.params.id} with success`);
+        return success(res, 202, `Deleted row ${req.params.id} with success`, {id: req.params.id});
     }
 
     catch (err) {
