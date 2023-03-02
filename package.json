@@ -7,7 +7,8 @@
   "scripts": {
     "dev": "nodemon src",
     "start": "node src",
-    "setup": "npm install && node src/setup.js"
+    "setup": "npm install && node src/setup.js",
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
@@ -25,6 +26,9 @@
     "sqlite3": "^5.1.4"
   },
   "devDependencies": {
+    "chai": "^4.3.7",
+    "chai-http": "^4.3.0",
+    "mocha": "^10.2.0",
     "nodemon": "^2.0.20"
   }
 }

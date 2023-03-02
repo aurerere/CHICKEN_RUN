@@ -6,6 +6,6 @@ const PORT = 1337;
 
 const app = express();
 
-app.use("/chickenController", chicken);
+app.use("/chicken", chicken);
 
 app.listen(PORT, () => console.log(`Server started (http://localhost:${PORT})`))
